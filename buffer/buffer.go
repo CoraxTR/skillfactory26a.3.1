@@ -2,6 +2,7 @@ package buffer
 
 import (
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -17,6 +18,7 @@ type buffer struct {
 }
 
 func CreateBuffer() *buffer {
+	log.Printf("[INFO] New buffer created")
 	return &buffer{
 		storage:      make([]int, bufferSize),
 		lifetime:     bufferLifeTime,
@@ -27,20 +29,23 @@ func CreateBuffer() *buffer {
 }
 
 func (b *buffer) WriteToBuffer(data int) {
+	log.Printf("[INFO] Writing %d to buffer", data)
 	b.storage[b.writePointer] = data
 	b.writePointer++
 	b.isEmpty = false
 	if b.writePointer == bufferSize {
-		fmt.Println("BufferOverFlow")
+		log.Printf("[WARNING] Buffer overflow")
 		b.writePointer = 0
 	}
 }
 
 func (b *buffer) ReadAllFromBuffer() ([]int, error) {
 	if b.isEmpty == true {
+		log.Printf("[WARNING] Trying to read empty buffer")
 		return nil, fmt.Errorf("Buffer is empty")
 	}
 	data := b.storage[b.readPointer:b.writePointer]
+	log.Printf("[INFO] Reading %d from buffer", data)
 	b.ClearBuffer()
 	return data, nil
 }
